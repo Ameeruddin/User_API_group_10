@@ -7,7 +7,7 @@ class Userlogin(Resource):
     parser=reqparse.RequestParser()
     parser.add_argument('user_name',type=str,required=True,help=" username cannot be left blank!")
     parser.add_argument('password_',type=str,required=True,help="Password cannot be left blank!")
-
+    
     def post(self):
         data=self.parser.parse_args()
         user=User.getUserById(data['user_name'])
@@ -64,28 +64,29 @@ class Sport_Registration(Resource):
         parser.add_argument('year_and_section',type=str,required=True,help="Year cannot be left blank!")
         parser.add_argument('branch',type=str,required=True,help="Sport_id cannot be left blank!")
         data=parser.parse_args()
-
+        
         #try:
         query(f""" insert into teamdetails (member_ID, sport_name, team_id, team_name, member_name, year_and_section, branch) values
-             ({data['member_ID']},'{data['sport_name']}',{data['team_id']},'{data['team_name']}','{data['member_name']}','{data['year_and_section']}','{data['branch']}');""")
+             ({data['member_ID']},'{data['sport_name']}',{data['team_id']},'{data['team_name']}','{data['member_name']}','{data['year_and_section']}','{data['branch']}');""") 
         #except:
             #return {"message":"There was an error inserting in the table."},500
 
 
        # return {"message":"Successfully Inserted."},201
-
+        
         # sport[f"""{data['sport name']}"""]
-
+        
 class Team_status(Resource):
     @jwt_required
     def get(self):
         parser=reqparse.RequestParser()
         parser.add_argument('team_id',type=int,required=True,help="Team id cannot be left blank!")
-        parser.add_argument('sport_name',type=int,required=True,help="Sport name cannot be left blank!")
+        parser.add_argument('sport_name',type=str,required=True,help="sport name  cannot be left blank!")
+
         data=parser.parse_args()
 
         try:
-            return query(f"""SELECT status FROM teamdetails WHERE team_id={data['team_id']} AND sport_name='{data['sport_name']}'""")
+            return query(f"""SELECT status FROM teamdetails WHERE team_id={data['team_id']} and sport_name='{data['sport_name']}'""")
         except:
             return {"message":"There was an error retrieving the data from database."},500
 class Sportdetails(Resource):
@@ -104,10 +105,10 @@ class Reporting_time(Resource):
     def get(self):
         parser=reqparse.RequestParser()
         parser.add_argument('team_id',type=int,required=True,help="Team id cannot be left blank!")
-        parser.add_argument('match_date',type=str,required=True,help="Match date cannot be left blank!")
+        parser.add_argument('sport_name',type=str,required=True,help="sport name cannot be left blank!")
         data=parser.parse_args()
         try:
-            return query(f"""SELECT reporting_time,start_time FROM group10.schedule1 WHERE team1_id={data['team_id']} OR team2_id={data['team_id']} AND match_date='{data['match_date']}'; """)
+            return query(f"""SELECT reporting_time,start_time FROM group10.schedule1 WHERE team1_id={data['team_id']} OR team2_id={data['team_id']} AND sport_name='{data['sport_name']}'; """)
         except:
             return {"message":"There has been an error retrieving sports details"},500
         return {"message":"Sports details retrieved succesfully."}
@@ -133,3 +134,7 @@ class Schedules(Resource):
         except:
             return {"message":"There has been an error retrieving dates and schedules."},500
         return {"message":"Dates and schedules retrieved succesfully."}
+
+
+        
+        
